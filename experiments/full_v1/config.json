@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "dh307-online-v1",
+  "seeds": [42, 123, 2026],
+  "data": {"train": 64, "val": 16, "test": 64, "selection_seed": 307, "max_residues": 700, "min_ligand_atoms": 12, "max_ligand_atoms": 50, "max_alignment_rmsd_A": 1.5},
+  "training": {"episodes": 512, "horizon": 4, "update_every": 8, "ppo_epochs": 4, "learning_rate": 0.0003, "gamma": 1.0, "clip_ratio": 0.2, "entropy": 0.01, "max_grad_norm": 1.0, "validate_every": 64},
+  "generation": {"ligands": 8, "pockets": 3, "flow_steps": 100, "timeout_seconds": 1800},
+  "constraints": {"strain_max": 100.0, "clash_pairs_max": 5, "atom_ratio_min": 0.8, "atom_ratio_max": 1.2, "charge_abs_max": 2, "qed_min": 0.2, "max_mutations": 4, "min_reference_tanimoto": 0.25, "protein_clash_increase_max": 10},
+  "reward": {"strain_weight": 0.01, "mutation_weight": 0.05, "action_cost": 0.02, "infeasible_reward": -2.0},
+  "conformations": {"replicas": 3, "train_replicas": 2, "frames": 6, "equilibration_steps": 50000, "steps_per_frame": 83334, "timestep_ps": 0.002, "backbone_restraint_kJ_mol_nm2": 418.4, "max_backbone_rmsd_A": 2.0, "seed": 3070},
+  "evaluation": {"horizon": 8, "score_budget_per_target": 64, "bootstrap_samples": 2000, "full_docking_top_k": 3, "dock_exhaustiveness": 16},
+  "interpretation": "Online PPO decision policies over fresh frozen FLOWR/PocketGen proposals. No molecular generator fine-tuning. Engineered pairs for cooperation; fixed-sequence local restrained-MD robustness for competition. No experimental binding or protein-foldability claim."
+}

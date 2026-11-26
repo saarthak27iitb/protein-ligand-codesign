@@ -1,0 +1,14 @@
+{
+  "flowr": {
+    "url": "https://github.com/jule-c/flowr.git",
+    "commit": "bbb8bfb4e8d8dd16bff1d56a7f96246920e643ba",
+    "patch": "patches/flowr-local.patch",
+    "patch_sha256": "e38f3b599e9cdc5b746a06c2b6203eb82b209eaf37d00ae54522bb1483e1777c"
+  },
+  "PocketGen": {
+    "url": "https://github.com/zaixizhang/PocketGen.git",
+    "commit": "37d826cb1622b33b5411bdf0b0d08737233d7328",
+    "patch": "patches/PocketGen-local.patch",
+    "patch_sha256": "4c7c48d513187cbc32f20ea6e8b4c6a89fee87c9002bf37f4e38dabbf1d4bd70"
+  }
+}

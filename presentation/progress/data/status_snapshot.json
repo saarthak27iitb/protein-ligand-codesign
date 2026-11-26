@@ -1,0 +1,68 @@
+{
+  "checked_date": "2026-11-25",
+  "source": "saved run artifacts; not a live scheduler status",
+  "status": {
+    "cooperative": {
+      "42": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "success": 256
+        }
+      },
+      "123": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "success": 256
+        }
+      },
+      "2026": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "success": 256
+        }
+      }
+    },
+    "competitive": {
+      "42": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 8,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "success": 7,
+          "RuntimeError('No eligible generated candidates in evaluation')": 1
+        }
+      },
+      "123": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 20,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "RuntimeError('No eligible generated candidates in evaluation')": 13,
+          "success": 7
+        }
+      },
+      "2026": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 176,
+        "evaluation_expected": 256,
+        "saved_evaluation_outcomes": {
+          "RuntimeError('No eligible generated candidates in evaluation')": 110,
+          "success": 65,
+          "ValueError('No legal actions')": 1
+        }
+      }
+    }
+  }
+}

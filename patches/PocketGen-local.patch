@@ -1,0 +1,45 @@
+diff --git a/models/PD.py b/models/PD.py
+index 19c7fd0..93c04c2 100644
+--- a/models/PD.py
++++ b/models/PD.py
+@@ -368,8 +368,8 @@ class Pocket_Design_new(Module):
+         if self.write_pdb:
+             res_S[residue_mask] = self.alphabet2standard[sampled_type.detach().clone()] + 1
+             to_sdf(pred_ligand, batch['ligand_element'].long(), batch['ligand_mask'].bool(), batch['ligand_batch'],batch['ligand_bond_type'].long(), batch['ligand_bond_index'].long(), batch['edge_batch'], self.generate_id, target_path)
+-            to_pdb(label_X, batch['amino_acid'], batch['res_idx'], batch['amino_acid_batch'], self.generate_id, batch['protein_filename'], target_path, original=True)
+-            self.generate_id = to_pdb(res_X, res_S, batch['res_idx'], batch['amino_acid_batch'], self.generate_id, batch['protein_filename'], target_path, original = False)
++            to_pdb(label_X, batch['amino_acid'], batch['res_idx'], batch['amino_acid_batch'], self.generate_id, batch['pocket_filename'], target_path, original=True)
++            self.generate_id = to_pdb(res_X, res_S, batch['res_idx'], batch['amino_acid_batch'], self.generate_id, batch['pocket_filename'], target_path, original = False)
+             
+         if self.write_whole_pdb:
+             self.generate_id1 = to_whole_pdb(res_X, res_S, batch['res_idx'], batch['amino_acid_batch'], self.generate_id1, batch['protein_filename'], batch['r10_mask'], self.orig_data_path, target_path)
+diff --git a/utils/relax.py b/utils/relax.py
+index 72c4dbe..f10fb90 100644
+--- a/utils/relax.py
++++ b/utils/relax.py
+@@ -10,6 +10,7 @@ import numpy as np
+ 
+ os.environ['OPENMM_CPU_THREADS'] = '4'  # prevent openmm from using all cpus available
+ from openmm import LangevinIntegrator, Platform, CustomExternalForce
++from openmm import unit
+ from openmm.app import PDBFile, Simulation, ForceField, HBonds, Modeller
+ from simtk.unit import kilocalories_per_mole, angstroms
+ from pdbfixer import PDBFixer
+diff --git a/utils/transforms.py b/utils/transforms.py
+index 10a9b42..c538ebc 100644
+--- a/utils/transforms.py
++++ b/utils/transforms.py
+@@ -9,7 +9,7 @@ import numpy as np
+ from copy import deepcopy
+ from torch_geometric.transforms import Compose
+ from torch_geometric.nn.pool import knn_graph
+-from torch_geometric.utils.subgraph import subgraph
++from torch_geometric.utils import subgraph
+ from torch_geometric.utils.num_nodes import maybe_num_nodes
+ from torch_geometric.data import Data, Batch
+ from torch_scatter import scatter_add
+@@ -386,4 +386,3 @@ def kabsch(A, B):
+         R = Vt.T * U.T
+     t = -R * centroid_B.T + centroid_A.T
+     return R, t
+-

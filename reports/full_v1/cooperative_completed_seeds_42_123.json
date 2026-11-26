@@ -1,0 +1,291 @@
+{
+  "scope": "interim, cooperative seeds 42 and 123 only; third seed and competitive evaluation excluded",
+  "per_seed": {
+    "42": {
+      "learned": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.36415978615974,
+        "matched_mean_utility": 6.0235578936934395,
+        "improved_over_reference_gt_0_01": 43,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.25684375,
+        "mean_queries": 29.25,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 13,
+        "changed_protein_sequence": 42,
+        "changed_both_chemistries": 12,
+        "observed_feasible_proposals": 1692,
+        "observed_proposals": 1872
+      },
+      "random_joint": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.295311576222778,
+        "matched_mean_utility": 5.902997609951423,
+        "improved_over_reference_gt_0_01": 43,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.2910625,
+        "mean_queries": 28.953125,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 13,
+        "changed_protein_sequence": 41,
+        "changed_both_chemistries": 11,
+        "observed_feasible_proposals": 1696,
+        "observed_proposals": 1853
+      },
+      "greedy_alternating": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.2339723172446355,
+        "matched_mean_utility": 6.015442122415006,
+        "improved_over_reference_gt_0_01": 37,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.028984375,
+        "mean_queries": 14.234375,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 13,
+        "changed_protein_sequence": 32,
+        "changed_both_chemistries": 8,
+        "observed_feasible_proposals": 841,
+        "observed_proposals": 911
+      },
+      "ligand_only": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 5.902439698665501,
+        "matched_mean_utility": 5.902439698665501,
+        "improved_over_reference_gt_0_01": 9,
+        "final_feasible": 61,
+        "mean_vina_dock": -8.330890625,
+        "mean_queries": 5.703125,
+        "zero_query_targets": 48,
+        "changed_ligand_chemistry": 9,
+        "changed_protein_sequence": 0,
+        "changed_both_chemistries": 0,
+        "observed_feasible_proposals": 297,
+        "observed_proposals": 365
+      }
+    },
+    "123": {
+      "learned": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.266581861701772,
+        "matched_mean_utility": 5.942631267616478,
+        "improved_over_reference_gt_0_01": 47,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.24146875,
+        "mean_queries": 28.5625,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 11,
+        "changed_protein_sequence": 46,
+        "changed_both_chemistries": 10,
+        "observed_feasible_proposals": 1646,
+        "observed_proposals": 1828
+      },
+      "random_joint": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.297959994575952,
+        "matched_mean_utility": 5.8958675796923075,
+        "improved_over_reference_gt_0_01": 46,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.321953125,
+        "mean_queries": 28.921875,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 11,
+        "changed_protein_sequence": 45,
+        "changed_both_chemistries": 10,
+        "observed_feasible_proposals": 1661,
+        "observed_proposals": 1851
+      },
+      "greedy_alternating": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 6.194651722801763,
+        "matched_mean_utility": 5.959918471657973,
+        "improved_over_reference_gt_0_01": 38,
+        "final_feasible": 61,
+        "mean_vina_dock": -9.157703125,
+        "mean_queries": 14.3125,
+        "zero_query_targets": 1,
+        "changed_ligand_chemistry": 11,
+        "changed_protein_sequence": 35,
+        "changed_both_chemistries": 9,
+        "observed_feasible_proposals": 849,
+        "observed_proposals": 916
+      },
+      "ligand_only": {
+        "targets": 64,
+        "evaluation_successes": 64,
+        "mean_utility": 5.902439698665501,
+        "matched_mean_utility": 5.902439698665501,
+        "improved_over_reference_gt_0_01": 9,
+        "final_feasible": 61,
+        "mean_vina_dock": -8.2774375,
+        "mean_queries": 5.703125,
+        "zero_query_targets": 48,
+        "changed_ligand_chemistry": 9,
+        "changed_protein_sequence": 0,
+        "changed_both_chemistries": 0,
+        "observed_feasible_proposals": 297,
+        "observed_proposals": 365
+      }
+    }
+  },
+  "combined_means": {
+    "learned": {
+      "targets": 64,
+      "evaluation_successes": 64,
+      "mean_utility": 6.315370823930756,
+      "matched_mean_utility": 5.983094580654958,
+      "improved_over_reference_gt_0_01": 45,
+      "final_feasible": 61,
+      "mean_vina_dock": -9.249156249999999,
+      "mean_queries": 28.90625,
+      "zero_query_targets": 1,
+      "changed_ligand_chemistry": 12,
+      "changed_protein_sequence": 44,
+      "changed_both_chemistries": 11,
+      "observed_feasible_proposals": 1669,
+      "observed_proposals": 1850
+    },
+    "random_joint": {
+      "targets": 64,
+      "evaluation_successes": 64,
+      "mean_utility": 6.296635785399365,
+      "matched_mean_utility": 5.8994325948218655,
+      "improved_over_reference_gt_0_01": 44.5,
+      "final_feasible": 61,
+      "mean_vina_dock": -9.306507812500001,
+      "mean_queries": 28.9375,
+      "zero_query_targets": 1,
+      "changed_ligand_chemistry": 12,
+      "changed_protein_sequence": 43,
+      "changed_both_chemistries": 10.5,
+      "observed_feasible_proposals": 1678.5,
+      "observed_proposals": 1852
+    },
+    "greedy_alternating": {
+      "targets": 64,
+      "evaluation_successes": 64,
+      "mean_utility": 6.214312020023199,
+      "matched_mean_utility": 5.98768029703649,
+      "improved_over_reference_gt_0_01": 37.5,
+      "final_feasible": 61,
+      "mean_vina_dock": -9.093343749999999,
+      "mean_queries": 14.2734375,
+      "zero_query_targets": 1,
+      "changed_ligand_chemistry": 12,
+      "changed_protein_sequence": 33.5,
+      "changed_both_chemistries": 8.5,
+      "observed_feasible_proposals": 845,
+      "observed_proposals": 913.5
+    },
+    "ligand_only": {
+      "targets": 64,
+      "evaluation_successes": 64,
+      "mean_utility": 5.902439698665501,
+      "matched_mean_utility": 5.902439698665501,
+      "improved_over_reference_gt_0_01": 9,
+      "final_feasible": 61,
+      "mean_vina_dock": -8.3041640625,
+      "mean_queries": 5.703125,
+      "zero_query_targets": 48,
+      "changed_ligand_chemistry": 9,
+      "changed_protein_sequence": 0,
+      "changed_both_chemistries": 0,
+      "observed_feasible_proposals": 297,
+      "observed_proposals": 365
+    }
+  },
+  "learned_minus_baseline": {
+    "random_joint": {
+      "full_cap_exploratory": {
+        "mean_difference": 0.02388367035411777,
+        "ci95": [
+          -0.024957942884383497,
+          0.08363951125673284
+        ],
+        "protein_clusters": 58
+      },
+      "prespecified_all_methods_equal_queries": {
+        "mean_difference": 0.09231667402272413,
+        "ci95": [
+          0.014175561136057026,
+          0.19922696128153955
+        ],
+        "protein_clusters": 58
+      },
+      "pairwise_equal_queries_exploratory": {
+        "mean_difference": 0.02893758554716071,
+        "ci95": [
+          -0.024917740796741698,
+          0.09567439102767207
+        ],
+        "protein_clusters": 58
+      }
+    },
+    "greedy_alternating": {
+      "full_cap_exploratory": {
+        "mean_difference": 0.10553311593036897,
+        "ci95": [
+          0.012168557502847404,
+          0.21155699412887113
+        ],
+        "protein_clusters": 58
+      },
+      "prespecified_all_methods_equal_queries": {
+        "mean_difference": -0.005060100834792783,
+        "ci95": [
+          -0.07077109978784935,
+          0.08308944781506497
+        ],
+        "protein_clusters": 58
+      },
+      "pairwise_equal_queries_exploratory": {
+        "mean_difference": -0.003381052482170749,
+        "ci95": [
+          -0.08952075309231705,
+          0.09529273583956116
+        ],
+        "protein_clusters": 58
+      }
+    },
+    "ligand_only": {
+      "full_cap_exploratory": {
+        "mean_difference": 0.42603941299387954,
+        "ci95": [
+          0.2892103646356659,
+          0.5757602824632666
+        ],
+        "protein_clusters": 58
+      },
+      "prespecified_all_methods_equal_queries": {
+        "mean_difference": 0.08899849047112578,
+        "ci95": [
+          -0.007899725229243103,
+          0.21594697504621546
+        ],
+        "protein_clusters": 58
+      },
+      "pairwise_equal_queries_exploratory": {
+        "mean_difference": 0.09155021460905682,
+        "ci95": [
+          -0.0072636398875899465,
+          0.22125107097413296
+        ],
+        "protein_clusters": 58
+      }
+    }
+  },
+  "limitations": [
+    "Two of three policy seeds; third seed incomplete at initial status check.",
+    "Utility is a computational optimization proxy, not measured affinity.",
+    "Ligand-only has zero queries for 48/64 targets, making the common all-method query budget zero on those targets.",
+    "The same 64 targets recur across policy seeds; bootstrap resamples protein-sequence clusters after averaging seed results.",
+    "Generation validity is not feasibility or improved binding.",
+    "Docking uses the same Vina scoring family; protein foldability is not established."
+  ]
+}

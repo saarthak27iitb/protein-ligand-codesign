@@ -1,0 +1,368 @@
+\documentclass[aspectratio=169,11pt]{beamer}
+\usefonttheme{professionalfonts}
+\renewcommand{\normalsize}{\fontsize{12}{15}\selectfont}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern,amsmath,booktabs,tabularx,array,tikz}
+\usetikzlibrary{arrows.meta,positioning}
+\definecolor{navy}{HTML}{1D3550}
+\definecolor{teal}{HTML}{147D83}
+\definecolor{grey}{HTML}{596572}
+\definecolor{rulegrey}{HTML}{D8DFE5}
+\setbeamercolor{normal text}{fg=navy,bg=white}
+\setbeamercolor{structure}{fg=teal}
+\setbeamercolor{frametitle}{fg=navy,bg=white}
+\setbeamerfont{frametitle}{size=\large,series=\bfseries}
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamersize{text margin left=9mm,text margin right=9mm}
+\setbeamertemplate{frametitle}{%
+ \vspace{3mm}\insertframetitle\par\vspace{2mm}%
+ {\color{rulegrey}\hrule height .4pt}\vspace{1mm}}
+\setbeamertemplate{footline}{%
+ \hspace{9mm}\begin{beamercolorbox}[wd=.86\paperwidth,ht=3ex,dp=1.5ex]{normal text}%
+ \color{grey}\scriptsize Saarthak Krishan\hfill DH 307\hspace{5mm}\insertframenumber
+ \end{beamercolorbox}}
+\addtobeamertemplate{itemize/enumerate body begin}{\setlength{\itemsep}{4mm}}{}
+\newcommand{\process}[3]{%
+ \begin{center}
+ \begin{tikzpicture}[node distance=10mm,every node/.style={font=\small\bfseries},every path/.style={draw=teal,line width=.8pt}]
+ \node (a) {#1}; \node[right=of a] (b) {#2}; \node[right=of b] (c) {#3};
+ \draw[-{Latex}] (a)--(b); \draw[-{Latex}] (b)--(c);
+ \end{tikzpicture}
+ \end{center}\vspace{2mm}}
+\newcommand{\conclusion}[1]{\par\vspace{4mm}\noindent{\color{teal}\bfseries #1\par}}
+\title{Protein--Ligand Design}
+\subtitle{Cooperative and Conformation-Aware Search}
+\author{Saarthak Krishan}
+\institute{Supervised by Prof. Debabrata Maiti}
+\date{}
+
+\begin{document}
+\begin{frame}[plain]
+\vspace{6mm}{\small\color{grey}DH 307 Research Progress\par}
+\vspace{7mm}{\bfseries\fontsize{25}{30}\selectfont Protein--Ligand Design\par}
+\vspace{3mm}{\large Cooperative and Conformation-Aware Search\par}
+\vspace{5mm}{\color{teal}\rule{24mm}{1pt}\par}
+\vspace{5mm}Saarthak Krishan\\[1mm]
+{\small Roll No. 22B3959}\\[4mm]
+{\small Supervised by Prof. Debabrata Maiti}
+\end{frame}
+\begin{frame}{Generation and decision-making are separate}
+
+\begin{columns}[T]
+\column{.47\textwidth}\textbf{Molecular generators}\par\vspace{3mm}
+\[q_\theta(L\mid P),\qquad q_\phi(P\mid L,S)\]
+FLOWR proposes ligands. PocketGen supplies pocket-edit proposals. Their weights stay fixed.
+\column{.47\textwidth}\textbf{Selection policies}\par\vspace{3mm}
+\[\pi_i(a\mid o,\mathcal A)\]
+PPO trains policies to choose among available candidates using molecular features and rewards.
+\end{columns}
+\conclusion{Our learned component selects structures supplied by the generators.}
+{\small\color{grey}$L$: ligand; $P$: pocket; $S$: scaffold; $o$: observation; $\mathcal A$: candidate set.}
+
+\end{frame}
+\begin{frame}{One decision step: propose, select, evaluate, learn}
+
+\process{Fresh proposals}{Two selections}{Pair evaluation}
+\begin{enumerate}
+\item The wrapper requests candidates from the pretrained models.
+\item The ligand actor selects a molecule; the second actor selects its partner.
+\item The evaluator returns feasibility and utility for that pair.
+\item Save observations, actions, rewards and old policy predictions for PPO.
+\end{enumerate}
+\conclusion{The actors use cheap features before the selected pair is scored.}
+{\small\color{grey}Partner = pocket edit in cooperation; protein conformation in competition.}
+
+\end{frame}
+\begin{frame}{The policy observes a 40-dimensional summary}
+
+\begin{tabularx}{\textwidth}{@{}Xr@{}}
+\toprule
+Observation component & Channels\\\midrule
+Ligand descriptors: size, weight, logP, TPSA, rotatable bonds, donors, acceptors, rings, QED & 9\\[2mm]
+Protein amino-acid composition & 20\\[2mm]
+Nearest-protein-atom contact-distance histogram & 8\\[2mm]
+Current utility, remaining decision budget, ligand charge & 3\\\bottomrule
+\end{tabularx}\par
+\vspace{4mm}
+\[o_t=\operatorname{encode}(P_t,L_t,U_t,b_t)\in\mathbb R^{40}\]
+\conclusion{A compact observation can lose important geometric information.}
+{\small\color{grey}It is not guaranteed to be a sufficient Markov state; raw atom coordinates are not policy inputs.}
+
+\end{frame}
+\begin{frame}{Actions are candidates, rather than atomic edits}
+
+For each candidate $a_j$, construct a 40-channel feature vector $f_j$.
+\[z_j=\operatorname{Actor}_{\theta_i}([o_t;f_j])\]
+\[\pi_i(a_j\mid o_t,\mathcal A_t)=
+\frac{m_j\exp(z_j)}{\sum_k m_k\exp(z_k)}\]
+\begin{itemize}
+\item $z_j$: candidate score; $m_j\in\{0,1\}$: eligibility mask.
+\item Training samples an eligible index from this distribution.
+\item Current ligand/pocket options can retain the existing design.
+\end{itemize}
+\conclusion{The same actor scores every candidate, allowing variable action counts.}
+{\small\color{grey}If all actions are masked, the distribution is undefined; this needs explicit handling.}
+
+\end{frame}
+\begin{frame}{Each agent has its own actor and critic}
+
+\begin{columns}[T]
+\column{.47\textwidth}\textbf{Actor: candidate selection}\par\vspace{4mm}
+\centering
+State (40) + candidate (40)\par\vspace{2mm}
+$\downarrow$\par
+Linear $80\to128$ + Tanh\par
+$\downarrow$\par
+Linear $128\to64$ + Tanh\par
+$\downarrow$\par
+Linear $64\to1$\par\vspace{2mm}
+Candidate logit
+\column{.47\textwidth}\textbf{Critic: expected return}\par\vspace{4mm}
+\centering
+State (40)\par\vspace{2mm}
+$\downarrow$\par
+Linear $40\to128$ + Tanh\par
+$\downarrow$\par
+Linear $128\to64$ + Tanh\par
+$\downarrow$\par
+Linear $64\to1$\par\vspace{2mm}
+$V_{\psi_i}(o_t)$
+\end{columns}
+\conclusion{Two actors and two critics; no shared neural weights between agents.}
+{\small\color{grey}One Adam optimizer updates both agents. $V_{\psi}$ here denotes value, not the Vina score.}
+
+\end{frame}
+\begin{frame}{Cooperation: two choices, one improvement reward}
+
+\[\pi(a_L,a_P\mid o)=\pi_L(a_L\mid o)\,\pi_P(a_P\mid o,a_L)\]
+\begin{itemize}
+\item Ligand actor selects a FLOWR candidate.
+\item Pocket actor observes features using that ligand and selects a pocket option.
+\item Feasible pairs update the current design; worsening moves are allowed in training.
+\end{itemize}
+\[r_L=r_P=U_{t+1}-U_t-0.02\]
+\conclusion{The shared reward encourages coordinated improvement.}
+{\small\color{grey}Infeasible pair: both rewards $=-2$. Backbone fixed; cumulative mutation cap = 4.}
+
+\end{frame}
+\begin{frame}{Competition: a ligand-aware conformation opponent}
+
+\process{Select ligand}{Select difficult state}{Opposite rewards}
+\begin{itemize}
+\item Fixed-sequence conformations come from restrained molecular dynamics.
+\item The opponent observes the chosen ligand and selects a training state.
+\item Feasible ligand choices carry forward; the protein sequence is unchanged.
+\end{itemize}
+\[r_L=U(P_C,L),\qquad r_C=-U(P_C,L)\]
+\conclusion{The aim is robustness over the allowed local conformations.}
+{\small\color{grey}Infeasible pair: $r_L=-20$, $r_C=+20$. This can give the opponent an easy reward.}
+
+\end{frame}
+\begin{frame}{The evaluator supplies utility and feasibility}
+
+\[U(P,L)=-V_{\mathrm{pose}}(P,L)-0.01E(L)-0.05N(P)\]
+\begin{tabularx}{\textwidth}{@{}p{24mm}>{\raggedright\arraybackslash}X@{}}
+$V_{\mathrm{pose}}$ & Vina score at the supplied pose; more negative is better.\\[3mm]
+$E(L)$ & MMFF94s ligand energy before minus after local minimization.\\[3mm]
+$N(P)$ & Residue identities changed relative to the starting protein.\\
+\end{tabularx}\par\vspace{3mm}
+Chemical, geometric and mutation constraints determine feasibility.
+\conclusion{Utility measures pair quality; reward defines the learning objective.}
+{\small\color{grey}The weights are heuristic. Utility is not experimentally measured binding affinity.}
+
+\end{frame}
+\begin{frame}{An episode is a short design trajectory}
+
+\process{Reset to reference}{Up to four steps}{Store the trajectory}
+\begin{itemize}
+\item Choose a training system; initialize its reference pair and utility.
+\item Each step generates proposals, samples actions and evaluates one pair.
+\item The current design changes only when the selected pair is feasible.
+\item Reset molecular state at the next episode; retain learned network weights.
+\end{itemize}
+\conclusion{An episode is one design attempt, not one complete dataset pass.}
+{\small\color{grey}A proposal failure can terminate early. Flow-integration steps are separate from RL steps.}
+
+\end{frame}
+\begin{frame}{Returns and advantages: what was better than expected?}
+
+For each player, accumulate rewards backward through its episode:
+\[G_t^{(i)}=r_t^{(i)}+\gamma G_{t+1}^{(i)},\qquad \gamma=1.\]
+Compare the observed return with the old critic prediction:
+\[A_t^{(i)}=G_t^{(i)}-V_{\psi_i,\mathrm{old}}(o_t).\]
+\begin{itemize}
+\item Positive advantage: outcome exceeded the critic's expectation.
+\item Negative advantage: outcome fell below that expectation.
+\item Implementation normalizes advantages across the combined update buffer.
+\end{itemize}
+\conclusion{The code uses episode returns, with no GAE or critic bootstrapping.}
+
+\end{frame}
+\begin{frame}{Why a policy gradient changes selection probabilities}
+
+The objective is expected return under the current selection policy:
+\[J(\theta)=\mathbb E_{\tau\sim\pi_\theta}\!\left[\sum_t r_t\right].\]
+A policy-gradient estimator uses
+\[\nabla_\theta J\;\approx\;
+\frac{1}{M}\sum_t A_t\nabla_\theta\log\pi_\theta(a_t\mid o_t,\mathcal A_t).\]
+\begin{itemize}
+\item Increase probability for actions with positive advantage.
+\item Decrease probability for actions with negative advantage.
+\end{itemize}
+\conclusion{No gradient through Vina or either molecular generator is required.}
+{\small\color{grey}For each player's update, the other player's behavior is part of the sampled environment.}
+
+\end{frame}
+\begin{frame}{PPO limits the incentive for large policy changes}
+
+Compare the new and rollout probabilities of the sampled action:
+\[\rho_t(\theta)=\frac{\pi_\theta(a_t\mid o_t,\mathcal A_t)}
+{\pi_{\mathrm{old}}(a_t\mid o_t,\mathcal A_t)}.\]
+\[L_{\mathrm{clip}}=\mathbb E\!\left[\min\left(
+\rho_t A_t,\;\operatorname{clip}(\rho_t,1-\epsilon,1+\epsilon)A_t
+\right)\right],\quad \epsilon=0.2.\]
+\begin{itemize}
+\item Stored old log-probabilities remain fixed during the update.
+\item Recompute new probabilities on the same saved candidates and masks.
+\item Clipping removes extra reward for overly aggressive changes in the favored direction.
+\end{itemize}
+\conclusion{Clipping shapes the objective; it is not a hard probability bound.}
+
+\end{frame}
+\begin{frame}{A numerical example of PPO clipping}
+\small
+Suppose the old probability of a selected action was $0.20$.\par
+\vspace{2mm}
+\begin{tabularx}{\textwidth}{@{}Xrr@{}}
+\toprule
+ & Positive advantage & Negative advantage\\
+ & $A=+1$ & $A=-1$\\\midrule
+New probability & $0.30$ & $0.10$\\[1mm]
+Ratio $\rho$ & $1.50$ & $0.50$\\[1mm]
+Unclipped term $\rho A$ & $1.50$ & $-0.50$\\[1mm]
+Clipped term & $1.20$ & $-0.80$\\[1mm]
+PPO uses the minimum & $1.20$ & $-0.80$\\\bottomrule
+\end{tabularx}\par
+\conclusion{Both examples limit further incentive for a large favored change.}
+{\small\color{grey}Illustrative numbers; not measured action probabilities from the runs.}
+
+\end{frame}
+\begin{frame}{The full loss trains selection, value and exploration}
+
+For each saved decision, the minimized loss is
+\[\mathcal L_t=-L_{\mathrm{clip},t}
++0.5\big(V_{\psi_i}(o_t)-G_t\big)^2
+-0.01\mathcal H\!\left(\pi_i(\cdot\mid o_t,\mathcal A_t)\right).\]
+\begin{itemize}
+\item \textbf{Policy loss:} improve the probability of useful decisions.
+\item \textbf{Value loss:} predict the player's observed return.
+\item \textbf{Entropy bonus:} discourage premature collapse onto one action.
+\end{itemize}
+\conclusion{Average losses across both agents; backpropagate through their MLPs.}
+{\small\color{grey}Separate player returns and critics; shared optimizer and pooled advantage normalization.}
+
+\end{frame}
+\begin{frame}{Training schedule used in the implementation}
+
+\begin{tabularx}{\textwidth}{@{}Xr@{}}
+\toprule
+Configuration & Value\\\midrule
+Episodes per seed & 512\\[1mm]
+Decision horizon per episode & Up to 4\\[1mm]
+Collect experience before an update & 8 episodes\\[1mm]
+PPO epochs per update & 4\\[1mm]
+Adam learning rate & $3\times10^{-4}$\\[1mm]
+Ratio clip / entropy coefficient & $0.2\;/\;0.01$\\[1mm]
+Gradient-norm clip & $1$\\\bottomrule
+\end{tabularx}\par
+\conclusion{64 rollout-update cycles per seed; three seeds per setting.}
+{\small\color{grey}Each PPO epoch uses the full buffered batch. Clear the buffer after the update.}
+
+\end{frame}
+\begin{frame}{Evaluation uses learned ranking and explicit screening}
+
+\begin{columns}[T]
+\column{.47\textwidth}\textbf{During training}\par\vspace{3mm}
+\begin{itemize}
+\item Sample actor actions.
+\item Score the selected pair.
+\item Save experience and update PPO.
+\end{itemize}
+\column{.47\textwidth}\textbf{During evaluation}\par\vspace{3mm}
+\begin{itemize}
+\item Fix the validation-selected policies.
+\item Rank candidates for scoring.
+\item Retain the best feasible design found.
+\end{itemize}
+\end{columns}
+\vspace{4mm}
+In competition, final selection uses exact worst-case screening over training states;
+held-out conformations are assessed afterward.
+\conclusion{The opponent is a training component, not the final evaluation oracle.}
+
+\end{frame}
+\begin{frame}{Completed cooperative results: a small learning effect}
+
+\noindent{\small Three completed policy seeds; higher mean utility is better.\par}
+\vspace{4mm}
+\begin{tabularx}{\textwidth}{@{}Xr@{}}\toprule
+Method & Mean utility\\\midrule
+Learned cooperative policy & 6.350\\[2mm]
+Random joint search & 6.301\\[2mm]
+Greedy alternating & 6.227\\[2mm]
+Ligand-only & 5.902\\\bottomrule
+\end{tabularx}\par
+\vspace{3mm}
+The paired uncertainty interval for learned minus random includes zero.
+Ligand-only is limited by candidate eligibility.
+\conclusion{We have not established a reliable advantage from RL.}
+
+\end{frame}
+\begin{frame}{Bottlenecks that PPO alone cannot resolve}
+
+\begin{itemize}
+\item \textbf{Candidate support:} the policy cannot select useful structures that are never proposed or eligible.
+\item \textbf{Representation:} coarse descriptors lose local contact chemistry.
+\item \textbf{Imbalance:} effective pocket and ligand action spaces differ; their contributions need measurement.
+\item \textbf{Competitive feedback:} infeasible pairs can reward the opponent without teaching useful robustness.
+\end{itemize}
+\conclusion{Completed training is not evidence of physical validity or game convergence.}
+
+\end{frame}
+\begin{frame}{Next experiments: distill, refine and isolate learning}
+
+\process{Feasible search teacher}{Imitate its choices}{Refine with PPO}
+\begin{enumerate}
+\item Align generation and eligibility; explicitly handle empty action sets.
+\item Use teacher decisions to initialize candidate-selection policies.
+\item Test a balanced curriculum or extra updates for the weaker selector.
+\item Compare imitation, PPO, and imitation + PPO against simple search.
+\end{enumerate}
+\conclusion{Teacher quality, proposal coverage and matched budgets remain essential.}
+{\small\color{grey}These interventions are proposed experiments; the current selectors were trained with PPO.}
+
+\end{frame}
+\begin{frame}[plain]
+\vfill{\bfseries\fontsize{28}{34}\selectfont Thank you\par}
+\vspace{4mm}{\color{teal}\rule{24mm}{1pt}\par}
+\vspace{4mm}Saarthak Krishan\vfill
+\end{frame}
+\appendix
+\begin{frame}{Backup: sources and implementation mapping}
+
+\small
+\textbf{PPO:} Schulman et al., Proximal Policy Optimization Algorithms.\par
+\url{https://arxiv.org/abs/1707.06347}\par\vspace{3mm}
+\textbf{FLOWR:} ligand proposals.\par
+\url{https://arxiv.org/abs/2504.10564}\par\vspace{3mm}
+\textbf{PocketGen:} pocket proposals; substitute for the PocketFlow direction.\par
+\url{https://doi.org/10.1038/s42256-024-00920-9}\par\vspace{3mm}
+\textbf{Local implementation:}\par
+\texttt{research/models.py}: actors, critics, PPO loss.\par
+\texttt{research/features.py}: observations and masks.\par
+\texttt{research/run.py}: episodes, rewards and evaluation.\par
+\texttt{research/evaluator.py}: pair utility and feasibility.
+
+\end{frame}
+\end{document}

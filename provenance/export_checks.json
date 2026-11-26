@@ -1,0 +1,17 @@
+{
+  "checked_date": "2026-11-27",
+  "scientific_code": "research/*.py matches submitted snapshot byte-for-byte",
+  "tests": {
+    "suite": "tests/test_research.py",
+    "run": 5,
+    "passed": 4,
+    "skipped": 1,
+    "skip_reason": "Optional historical PocketGen projection artifact is excluded"
+  },
+  "headline_means": "recomputed from all included cooperative per-target records",
+  "upstream_patches": "both reconstructed all modified files from pinned originals",
+  "static_checks": "research Python compilation and Slurm syntax passed",
+  "content_scan": "no server home paths or common GitHub/AWS/private-key patterns found in included readable text; not a guarantee against all sensitive content",
+  "fresh_gpu_reproduction": "not performed",
+  "github_publication": "not performed"
+}

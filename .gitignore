@@ -1,0 +1,43 @@
+# Local environments, tools and downloaded dependencies
+/envs/
+/.venv/
+/.mamba*/
+/.dev-tools/
+/bin/
+/vendor/
+# Large or generated scientific artifacts
+/data/
+/downloads/
+/checkpoints/
+/runs/
+/logs/
+/share/
+/experiments/*/snapshot/
+/experiments/*/submission_source.tar.gz
+/experiments/*/submission.lock
+/experiments/*/jobs.json
+# Python and build outputs
+__pycache__/
+*.py[cod]
+*.egg-info/
+/build/
+/dist/
+.pytest_cache/
+**/presentation/**/build/
+**/presentation/**/archive/
+*.aux
+*.nav
+*.snm
+*.toc
+*.vrb
+*.log
+*.out
+# Local credentials and editor files
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+.DS_Store
+.vscode/
+.idea/

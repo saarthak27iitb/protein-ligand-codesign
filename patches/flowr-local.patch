@@ -1,0 +1,152 @@
+diff --git a/flowr/data/datamodules.py b/flowr/data/datamodules.py
+index b792eaf..5d93bf9 100644
+--- a/flowr/data/datamodules.py
++++ b/flowr/data/datamodules.py
+@@ -60,7 +60,7 @@ class SmolDM(L.LightningDataModule):
+                     "At least one item in test dataset is larger than largest padded size."
+                 )
+ 
+-        self._num_workers = 8  # len(os.sched_getaffinity(0))
++        self._num_workers = int(os.environ.get("FLOWR_NUM_WORKERS", min(8, len(os.sched_getaffinity(0)))))
+ 
+         self.vocab = vocab
+ 
+diff --git a/flowr/gen/generate_from_pdb.py b/flowr/gen/generate_from_pdb.py
+index 81af8aa..0426719 100644
+--- a/flowr/gen/generate_from_pdb.py
++++ b/flowr/gen/generate_from_pdb.py
+@@ -271,11 +271,35 @@ def filter_diverse_ligands_bulk(ligands, pdbs=None, threshold=0.9):
+     Returns:
+         list: Filtered list of diverse Chem.Mol objects.
+     """
++    if pdbs is not None and len(pdbs) != len(ligands):
++        raise ValueError("Each ligand must have a corresponding pocket")
++    # Generation may return None or unsanitizable molecules. Keep the pocket
++    # association while removing them before fingerprinting, without mutating
++    # the raw proposals retained for validity accounting.
++    valid_ligands = []
++    valid_pdbs = []
++    for i, ligand in enumerate(ligands):
++        if ligand is None or ligand.GetNumAtoms() == 0:
++            continue
++        candidate = Chem.Mol(ligand)
++        try:
++            Chem.SanitizeMol(candidate)
++        except (ValueError, RuntimeError):
++            continue
++        valid_ligands.append(candidate)
++        if pdbs is not None:
++            valid_pdbs.append(pdbs[i])
++    removed = len(ligands) - len(valid_ligands)
++    if removed:
++        warnings.warn(f"Excluded {removed} invalid ligand(s) before diversity filtering")
++    ligands = valid_ligands
++    if pdbs is not None:
++        pdbs = valid_pdbs
+     # Compute Morgan fingerprints (with radius 2)
+     fps = get_fingerprints(ligands, radius=2, length=4096, chiral=True, sanitize=False)
+     n = len(fps)
+     if n == 0:
+-        return []
++        return ([], []) if pdbs is not None else []
+ 
+     # Compute pairwise similarity matrix; initialize with zeros.
+     sim_matrix = np.zeros((n, n))
+@@ -302,7 +326,7 @@ def filter_diverse_ligands_bulk(ligands, pdbs=None, threshold=0.9):
+ 
+ 
+ def load_model(args):
+-    checkpoint = torch.load(args.ckpt_path)
++    checkpoint = torch.load(args.ckpt_path, map_location="cpu", weights_only=False)
+     hparams = dotdict(checkpoint["hyper_parameters"])
+     hparams["compile_model"] = False
+     hparams["integration-steps"] = args.integration_steps
+@@ -423,6 +447,7 @@ def load_model(args):
+     # Build the model
+     fm_model = CFM.load_from_checkpoint(
+         args.ckpt_path,
++        map_location="cpu",
+         gen=egnn_gen,
+         vocab=vocab,
+         integrator=integrator,
+@@ -704,6 +729,10 @@ def evaluate(args):
+         f"\n Run time={round(run_time, 2)}s for {len(out_dict['gen_ligs'])} molecules \n"
+     )
+ 
++    # Preserve raw generation, including failed proposals, before postprocessing.
++    target_name = Path(args.pdb_file).stem
++    torch.save(out_dict, Path(args.save_dir) / f"samples_raw_{target_name}.pt")
++
+     # Filter by diversity
+     print("Filtering ligands by diversity...")
+     if args.arch == "pocket_flex":
+@@ -715,6 +744,11 @@ def evaluate(args):
+     print(
+         f"Number of ligands after filtering by diversity: {len(all_gen_ligs)} ligands ({args.sample_n_molecules_per_target - len(all_gen_ligs)} removed)"
+     )
++    out_dict["filtered_gen_ligs"] = all_gen_ligs
++    if args.arch == "pocket_flex":
++        out_dict["filtered_gen_pdbs"] = all_gen_pdbs
++    if not all_gen_ligs:
++        raise RuntimeError("No valid ligands remain after diversity filtering; raw proposals were saved")
+ 
+     # Protonate generated ligands:
+     if args.protonate_generated_ligands:
+diff --git a/flowr/gen/generate_from_smol.py b/flowr/gen/generate_from_smol.py
+index ac83814..dd56999 100644
+--- a/flowr/gen/generate_from_smol.py
++++ b/flowr/gen/generate_from_smol.py
+@@ -57,7 +57,7 @@ def split_list(data, num_chunks):
+ 
+ 
+ def load_model(args):
+-    checkpoint = torch.load(args.ckpt_path)
++    checkpoint = torch.load(args.ckpt_path, map_location="cpu", weights_only=False)
+     hparams = dotdict(checkpoint["hyper_parameters"])
+     hparams["compile_model"] = False
+     hparams["integration-steps"] = args.integration_steps
+@@ -167,6 +167,7 @@ def load_model(args):
+     )
+     fm_model = CFM.load_from_checkpoint(
+         args.ckpt_path,
++        map_location="cpu",
+         gen=egnn_gen,
+         vocab=vocab,
+         integrator=integrator,
+diff --git a/genbench3d/conf_ensemble/conf_ensemble_library.py b/genbench3d/conf_ensemble/conf_ensemble_library.py
+index 23ccb6c..f3811ea 100755
+--- a/genbench3d/conf_ensemble/conf_ensemble_library.py
++++ b/genbench3d/conf_ensemble/conf_ensemble_library.py
+@@ -14,7 +14,6 @@ from tqdm import tqdm
+ 
+ from genbench3d.utils import get_full_matrix_from_tril
+ 
+-from ..utils.molconfviewer import MolConfViewer
+ from .conf_ensemble import ConfEnsemble
+ 
+ # These are legacy behaviour from previous work when CEL needed to be saved for faster processing
+@@ -345,6 +344,7 @@ class ConfEnsembleLibrary:
+             filepath = os.path.join(cel_dir, filename)
+             ce = ConfEnsemble.from_file(filepath, name)
+             mol = ce.get_mol()
++            from ..utils.molconfviewer import MolConfViewer
+             viewer = MolConfViewer()
+             viewer.view(mol)
+         except Exception as e:
+diff --git a/genbench3d/utils/__init__.py b/genbench3d/utils/__init__.py
+index 7efd98e..5d9fe29 100644
+--- a/genbench3d/utils/__init__.py
++++ b/genbench3d/utils/__init__.py
+@@ -4,4 +4,10 @@ from .misc import (get_full_matrix_from_tril,
+                    shift_torsion_values,
+                    unshift_torsion_values,
+                    preprocess_mols)
+-from .molconfviewer import MolConfViewer
+\ No newline at end of file
++
++def __getattr__(name):
++    # Notebook-only dependencies should not be required for model inference.
++    if name == "MolConfViewer":
++        from .molconfviewer import MolConfViewer
++        return MolConfViewer
++    raise AttributeError(name)

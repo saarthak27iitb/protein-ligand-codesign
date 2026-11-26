@@ -1,0 +1,19 @@
+{
+  "research_matches_submitted_snapshot": true,
+  "files": {
+    "research/proposals.py": true,
+    "research/__init__.py": true,
+    "research/prepare.py": true,
+    "research/report.py": true,
+    "research/download_structures.py": true,
+    "research/run.py": true,
+    "research/models.py": true,
+    "research/common.py": true,
+    "research/features.py": true,
+    "research/evaluator.py": true,
+    "research/stage_data.py": true,
+    "research/submit.py": true,
+    "research/workers.py": true,
+    "research/ensemble.py": true
+  }
+}

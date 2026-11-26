@@ -1,0 +1,58 @@
+{
+  "checked_date": "2026-11-27",
+  "source": "saved artifacts, not scheduler state",
+  "status": {
+    "cooperative": {
+      "42": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_successes": 256,
+        "saved_errors": 0
+      },
+      "123": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_successes": 256,
+        "saved_errors": 0
+      },
+      "2026": {
+        "stage": "complete",
+        "episodes_completed": 512,
+        "evaluation_completed": 256,
+        "evaluation_expected": 256,
+        "saved_successes": 256,
+        "saved_errors": 0
+      }
+    },
+    "competitive": {
+      "42": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 8,
+        "evaluation_expected": 256,
+        "saved_successes": 7,
+        "saved_errors": 1
+      },
+      "123": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 20,
+        "evaluation_expected": 256,
+        "saved_successes": 7,
+        "saved_errors": 13
+      },
+      "2026": {
+        "stage": "evaluation",
+        "episodes_completed": 512,
+        "evaluation_completed": 176,
+        "evaluation_expected": 256,
+        "saved_successes": 65,
+        "saved_errors": 111
+      }
+    }
+  }
+}

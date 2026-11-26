@@ -1,0 +1,17 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dh307-molecular-games"
+version = "1.0.0"
+description = "Online cooperative and conformation-adversarial molecular design with frozen conditional generators"
+requires-python = ">=3.10"
+authors = [{name = "Saarthak Krishan"}]
+
+[project.scripts]
+dh307-train = "research.run:main"
+dh307-report = "research.report:main"
+
+[tool.setuptools]
+packages = ["research"]

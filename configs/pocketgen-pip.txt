@@ -1,0 +1,8 @@
+numpy<2
+fair-esm==2.0.0
+omegaconf==2.3.0
+torch-geometric==2.5.3
+wandb
+tqdm
+networkx
+scikit-learn

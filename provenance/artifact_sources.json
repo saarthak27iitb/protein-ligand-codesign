@@ -1,0 +1,95 @@
+{
+  "flowr-checkpoints-record.json": {
+    "doi_url": "https://doi.org/10.5281/zenodo.15737419",
+    "files": [
+      {
+        "name": "flowr_noHs.ckpt",
+        "size_bytes": 629067043,
+        "checksum": "md5:e0d49765629c4b9a6847c4dcdbf678ad",
+        "url": "https://zenodo.org/api/records/15737419/files/flowr_noHs.ckpt/content"
+      },
+      {
+        "name": "flowr_withHs.ckpt",
+        "size_bytes": 629067043,
+        "checksum": "md5:2fbcb0ea68dab711e430b4ecafe6fb64",
+        "url": "https://zenodo.org/api/records/15737419/files/flowr_withHs.ckpt/content"
+      }
+    ]
+  },
+  "flowr-data-record.json": {
+    "doi_url": "https://doi.org/10.5281/zenodo.15257565",
+    "files": [
+      {
+        "name": "val_cifs_with_hs.tar",
+        "size_bytes": 2662400,
+        "checksum": "md5:1e3b0d93f5896f6820e43c6c530857cf",
+        "url": "https://zenodo.org/api/records/15257565/files/val_cifs_with_hs.tar/content"
+      },
+      {
+        "name": "genbench3d_data.tar",
+        "size_bytes": 1621544960,
+        "checksum": "md5:e1cfdec86e9537ad8cfc428920c0cec6",
+        "url": "https://zenodo.org/api/records/15257565/files/genbench3d_data.tar/content"
+      },
+      {
+        "name": "interaction_samples.tar",
+        "size_bytes": 77660160,
+        "checksum": "md5:8fd9134a5f78741f5b6c634ac8a00aeb",
+        "url": "https://zenodo.org/api/records/15257565/files/interaction_samples.tar/content"
+      },
+      {
+        "name": "samples.tar",
+        "size_bytes": 80670720,
+        "checksum": "md5:ad3a440cf1a22d9e9579960ef1448c71",
+        "url": "https://zenodo.org/api/records/15257565/files/samples.tar/content"
+      },
+      {
+        "name": "train_cifs_with_hs.tar",
+        "size_bytes": 1344911360,
+        "checksum": "md5:303a0cd2e5f013978364830be4dfe220",
+        "url": "https://zenodo.org/api/records/15257565/files/train_cifs_with_hs.tar/content"
+      },
+      {
+        "name": "test_cifs_with_hs.tar",
+        "size_bytes": 16977920,
+        "checksum": "md5:202e1befaffb6c81c85acea08c15ab1d",
+        "url": "https://zenodo.org/api/records/15257565/files/test_cifs_with_hs.tar/content"
+      },
+      {
+        "name": "linker_samples.tar",
+        "size_bytes": 75233280,
+        "checksum": "md5:5ff98478a3cb41181209e7932c47e536",
+        "url": "https://zenodo.org/api/records/15257565/files/linker_samples.tar/content"
+      },
+      {
+        "name": "smol_data.zip",
+        "size_bytes": 374556986,
+        "checksum": "md5:08bc429113f54dbd99a1c54fae939d2c",
+        "url": "https://zenodo.org/api/records/15257565/files/smol_data.zip/content"
+      },
+      {
+        "name": "flowr.ckpt",
+        "size_bytes": 629066979,
+        "checksum": "md5:d556a8ff13cbeedf663f08f2b9d0b147",
+        "url": "https://zenodo.org/api/records/15257565/files/flowr.ckpt/content"
+      },
+      {
+        "name": "func-group_samples.tar",
+        "size_bytes": 75038720,
+        "checksum": "md5:fcce6e3e8b5e41353aa6e8073f69eee5",
+        "url": "https://zenodo.org/api/records/15257565/files/func-group_samples.tar/content"
+      },
+      {
+        "name": "scaffold_samples.tar",
+        "size_bytes": 75417600,
+        "checksum": "md5:92abcc5cada63f5fcdec05c6ba68bf81",
+        "url": "https://zenodo.org/api/records/15257565/files/scaffold_samples.tar/content"
+      }
+    ]
+  },
+  "PocketGen checkpoint": {
+    "url": "https://drive.google.com/file/d/1cuvdiu3bXyni71A2hoeZSWT1NOsNfeD_/view",
+    "local_path": "checkpoints/pocketgen.pt",
+    "reference": "https://github.com/zaixizhang/PocketGen"
+  }
+}
